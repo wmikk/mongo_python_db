@@ -16,7 +16,7 @@ def print_commands():
     print("\t2) Add a course")
     print("\t3) Edit a course")
     print("\t4) Delete a course")
-    print("\t5) Exit application")
+    print("\t5) Add a grade")
 
 def list_courses():
     print("List all the courses")
@@ -48,7 +48,32 @@ def add_course():
     
     print(f"course {name} has been added!")
 
+def add_grade():
+    print("Provide the grade information")
+    course_id_str = input("Enter the ID of the course for this grade:")
+    try:
+        course_oid = ObjectId(course_id_str)
 
+    except Exception:
+        print("Invalid ID format. Cannot add grade.")
+        return
+
+    student_name = input("Student name:")
+    grade = input("Grade:")
+    student_number = input("student_number:")
+    comment = input("comment:")
+
+    new_grade = {
+            "course_id": course_oid,
+            "student_name": student_name,
+            "student_number": student_number,
+            "grade": int(grade),
+            "comment": comment
+        }
+    
+    grades_collection.insert_one(new_grade)
+    print(f"Grade added for {student_name}")
+    
 def edit_course():
     print("Which course do you want to edit?")
     course_id_str = input("Enter the Course ID to edit:")
@@ -100,6 +125,7 @@ while True:
     elif command == "4":
         delete_course()
     elif command == "5":
+        add_grade()
         break
     else:
         print("I don't know that command")

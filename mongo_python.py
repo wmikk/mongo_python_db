@@ -17,6 +17,9 @@ def print_commands():
     print("\t3) Edit a course")
     print("\t4) Delete a course")
     print("\t5) Add a grade")
+    print("\t6) Edit grade")
+    print("\t7) list grade by course")
+    print("\t8) delete a grade") 
 
 def list_courses():
     print("List all the courses")
@@ -73,7 +76,59 @@ def add_grade():
     
     grades_collection.insert_one(new_grade)
     print(f"Grade added for {student_name}")
+
+def list_grades_by_course():
+    course_id_str = input("\nEnter the Course ID to view grades: ")
     
+    try:
+        course_oid = ObjectId(course_id_str)
+    except Exception:
+        print("Invalid ID format.")
+        return
+    course_grades = grades_collection.find({"course_id": course_oid})
+
+    for entry in course_grades:
+        print(f"Student: {entry['student_name']} | Grade: {entry['grade']}")
+
+def edit_grade():
+    print("Provide the grade information")
+    grade_id_str = input("Enter the ID of the grade:")
+    try:
+        grade_oid = ObjectId(grade_id_str)
+
+    except Exception:
+        print("Invalid ID format. Cannot edit grade.")
+        return
+
+    print("Provide new info (press Enter to skip):")
+    new_grade_val = input("New Grade (0-5): ")
+    new_student_name = input("Corrected Student Name: ")
+    new_student_number = input("New student number")
+    new_comment = input("edit a comment")
+
+    new_grade = {
+            "student_name": new_student_name,
+            "student_number": new_student_number,
+            "grade": int(new_grade_val),
+            "comment": new_comment
+        }
+    
+    grades_collection.update_one(new_grade)
+    print(f"Grade edited for {new_student_name}")
+
+def delete_grade():
+    print("Provide the grade information")
+    grade_id_str = input("Enter the ID of the grade:")
+    try:
+        grade_oid = ObjectId(grade_id_str)
+
+    except Exception:
+        print("Invalid ID format. Cannot delete grade.")
+        return
+
+    grades_collection.delete_one({"_id": grade_oid})
+    print("Course deleted successfully")
+
 def edit_course():
     print("Which course do you want to edit?")
     course_id_str = input("Enter the Course ID to edit:")
@@ -126,6 +181,12 @@ while True:
         delete_course()
     elif command == "5":
         add_grade()
+    elif command == "6":
+        edit_grade()
+    elif command == "7":
+        list_grades_by_course()
+    elif command == "8":
+        delete_grade()
         break
     else:
         print("I don't know that command")
